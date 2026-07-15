@@ -2394,20 +2394,56 @@ Behance
     }
   }, { passive: true });
 
-  // simple form feedback
-  document.getElementById('submit-btn').addEventListener('click', () => {
-    const name = document.getElementById('f-name').value.trim();
-    const email = document.getElementById('f-email').value.trim();
-    const msg = document.getElementById('f-message').value.trim();
-    if (!name || !email || !msg) {
-      alert('Please fill in all fields.');
-      return;
+  // Contact Form → Google Sheets + Gmail
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwL4W2OLVZygAhNLGNvUW9lPDWmprszBQCvli6TiSWb1vs8gbVzcnUy5LulfhhFKak/exec";
+
+document.getElementById("submit-btn").addEventListener("click", async () => {
+
+    const name = document.getElementById("f-name").value.trim();
+    const email = document.getElementById("f-email").value.trim();
+    const message = document.getElementById("f-message").value.trim();
+
+    if (!name || !email || !message) {
+        alert("Please fill in all fields.");
+        return;
     }
-    const btn = document.getElementById('submit-btn');
-    btn.textContent = 'Sent ✓';
-    btn.style.background = '#A8B59B';
+
+    const btn = document.getElementById("submit-btn");
+
     btn.disabled = true;
-  });
+    btn.textContent = "Sending...";
+
+    try {
+
+        await fetch(SCRIPT_URL, {
+
+            method: "POST",
+
+            body: JSON.stringify({
+                name,
+                email,
+                message
+            })
+
+        });
+
+        btn.textContent = "Sent ✓";
+        btn.style.background = "#A8B59B";
+
+        document.getElementById("f-name").value = "";
+        document.getElementById("f-email").value = "";
+        document.getElementById("f-message").value = "";
+
+    } catch (err) {
+
+        alert("Message could not be sent.");
+
+        btn.disabled = false;
+        btn.textContent = "Send Message";
+
+    }
+
+});
 
   // hero fade and rising columns
   const hero=document.getElementById('hero');
